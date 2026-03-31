@@ -38,7 +38,7 @@
       outline: none;
       border-color: #4ecdc4;
     }
-    textarea { resize: vertical; min-height: 200px; }
+    textarea { resize: vertical; min-height: 120px; }
     .btn-row { display: flex; gap: 12px; margin-top: 16px; }
     .btn {
       padding: 12px 28px;
@@ -118,36 +118,25 @@
           <input type="text" id="beVersion" placeholder="如: 1.5.2">
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group" style="flex: 2;">
-          <label>Bug 標題（可留空自動產生）</label>
-          <input type="text" id="bugTitle" placeholder="留空則自動產生格式標題">
-        </div>
-        <div class="form-group">
+      <div class="form-group">
+        <label>Bug 標題（可留空自動產生）</label>
+        <input type="text" id="bugTitle" placeholder="留空則自動產生格式標題">
       </div>
     </div>
 
     <div class="card">
       <h3>📝 測試內容</h3>
-      <div class="form-row">
-        <div class="form-group" style="flex: 1;">
-          <label>測試步驟</label>
-          <textarea id="testSteps" placeholder="1. 進入頁面
-2. 點擊按鈕
-3. 觀察結果"></textarea>
-        </div>
+      <div class="form-group">
+        <label>測試步驟</label>
+        <textarea id="testSteps" placeholder="1. 進入頁面&#10;2. 點擊按鈕&#10;3. 觀察結果"></textarea>
       </div>
-      <div class="form-row">
-        <div class="form-group" style="flex: 1;">
-          <label>測試結果（Bug 描述）</label>
-          <textarea id="testResult" placeholder="描述實際發生的錯誤行為"></textarea>
-        </div>
+      <div class="form-group">
+        <label>測試結果（Bug 描述）</label>
+        <textarea id="testResult" placeholder="描述實際發生的錯誤行為"></textarea>
       </div>
-      <div class="form-row">
-        <div class="form-group" style="flex: 1;">
-          <label>預期結果</label>
-          <textarea id="expectedResult" placeholder="描述預期應該發生的正確行為"></textarea>
-        </div>
+      <div class="form-group">
+        <label>預期結果</label>
+        <textarea id="expectedResult" placeholder="描述預期應該發生的正確行為"></textarea>
       </div>
       <div class="btn-row">
         <button class="btn btn-primary" onclick="generate()">🔄 產生 Test Case</button>
@@ -175,3 +164,54 @@
       const feVersion = document.getElementById('feVersion').value || 'N/A';
       const beVersion = document.getElementById('beVersion').value || 'N/A';
       const bugTitle = document.getElementById('bugTitle').value;
+      const testSteps = document.getElementById('testSteps').value || '（未填寫）';
+      const testResult = document.getElementById('testResult').value || '（未填寫）';
+      const expectedResult = document.getElementById('expectedResult').value || '（未填寫）';
+      const today = getToday();
+
+      let title = bugTitle.trim();
+      if (!title) {
+        title = `[${env}][${feBe}][${platform}] Bug - 預期行為異常`;
+      }
+
+      const output = `【標題】
+${title}
+
+【測試資訊】
+  測試環境：${env}
+  測試帳號：${account}
+  測試日期 / 測試時間：${today}
+  測試版本：F: ${feVersion}  B: ${beVersion}
+
+【測試步驟】
+${testSteps}
+
+【測試結果】
+${testResult}
+
+【預期結果】
+${expectedResult}`;
+
+      document.getElementById('output').textContent = output;
+    }
+
+    function copyOutput() {
+      const text = document.getElementById('output').textContent;
+      if (!text || text === '選擇並填寫上方欄位後，點擊「產生 Test Case」') {
+        alert('請先產生 Test Case');
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        alert('已複製到剪貼簿！');
+      }).catch(() => {
+        prompt('複製失敗，請手動選取複製：', text);
+      });
+    }
+
+    function clearAll() {
+      document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+      document.getElementById('output').textContent = '選擇並填寫上方欄位後，點擊「產生 Test Case」';
+    }
+  </script>
+</body>
+</html>

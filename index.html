@@ -221,6 +221,12 @@
     loadFormData();
     toggleFlutterFields(); // init on load
 
+    // Auto-save on every input change
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      el.addEventListener('input', saveFormData);
+      el.addEventListener('change', saveFormData);
+    });
+
     function toggleFlutterFields() {
       const platform = document.getElementById('platform').value;
       const flutterSection = document.getElementById('flutterFields');

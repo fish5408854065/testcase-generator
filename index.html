@@ -256,7 +256,8 @@
       const androidVersion = document.getElementById('androidVersion').value || 'N/A';
 
       let title = bugTitle.trim();
-      if (!title) {
+      if (!title || title.length < 3) {
+        // Auto-generate from basic info when title is empty or too short
         title = `[${env}][${feBe}][${platform}] Bug - 預期行為異常`;
       }
 

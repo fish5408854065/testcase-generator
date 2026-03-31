@@ -66,6 +66,8 @@
       overflow-x: auto;
     }
     .preview-label { color: #666; font-size: 13px; margin-top: 16px; margin-bottom: 8px; }
+    .flutter-fields { display: none; border-top: 1px dashed #e8e8e8; padding-top: 16px; margin-top: 8px; }
+    .flutter-fields.visible { display: block; }
   </style>
 </head>
 <body>
@@ -93,7 +95,7 @@
         </div>
         <div class="form-group">
           <label>測試平台</label>
-          <select id="platform">
+          <select id="platform" onchange="toggleFlutterFields()">
             <option value="M1">M1</option>
             <option value="M2">M2</option>
             <option value="M5">M5</option>
@@ -121,6 +123,23 @@
       <div class="form-group">
         <label>Bug 標題（可留空自動產生）</label>
         <input type="text" id="bugTitle" placeholder="留空則自動產生格式標題">
+      </div>
+
+      <div class="flutter-fields" id="flutterFields">
+        <div class="form-row">
+          <div class="form-group">
+            <label>📱 手機型號</label>
+            <input type="text" id="phoneModel" placeholder="如: iPhone 15 Pro">
+          </div>
+          <div class="form-group">
+            <label>🍎 iOS 版本</label>
+            <input type="text" id="iosVersion" placeholder="如: 17.2">
+          </div>
+          <div class="form-group">
+            <label>🤖 Android 版本</label>
+            <input type="text" id="androidVersion" placeholder="如: 14">
+          </div>
+        </div>
       </div>
     </div>
 
@@ -156,6 +175,16 @@
       return `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
     }
 
+    function toggleFlutterFields() {
+      const platform = document.getElementById('platform').value;
+      const flutterSection = document.getElementById('flutterFields');
+      if (platform === 'Flutter') {
+        flutterSection.classList.add('visible');
+      } else {
+        flutterSection.classList.remove('visible');
+      }
+    }
+
     function generate() {
       const env = document.getElementById('env').value;
       const feBe = document.getElementById('feBe').value;
@@ -169,19 +198,33 @@
       const expectedResult = document.getElementById('expectedResult').value || '（未填寫）';
       const today = getToday();
 
+      const isFlutter = platform === 'Flutter';
+      const phoneModel = document.getElementById('phoneModel').value || 'N/A';
+      const iosVersion = document.getElementById('iosVersion').value || 'N/A';
+      const androidVersion = document.getElementById('androidVersion').value || 'N/A';
+
       let title = bugTitle.trim();
       if (!title) {
         title = `[${env}][${feBe}][${platform}] Bug - 預期行為異常`;
+      }
+
+      let testInfo = `  測試環境：${env}
+  測試帳號：${account}
+  測試日期 / 測試時間：${today}
+  測試版本：F: ${feVersion}  B: ${beVersion}`;
+
+      if (isFlutter) {
+        testInfo += `
+  手機型號：${phoneModel}
+  iOS 版本：${iosVersion}
+  Android 版本：${androidVersion}`;
       }
 
       const output = `【標題】
 ${title}
 
 【測試資訊】
-  測試環境：${env}
-  測試帳號：${account}
-  測試日期 / 測試時間：${today}
-  測試版本：F: ${feVersion}  B: ${beVersion}
+${testInfo}
 
 【測試步驟】
 ${testSteps}
@@ -211,6 +254,7 @@ ${expectedResult}`;
     function clearAll() {
       document.querySelectorAll('input, textarea').forEach(el => el.value = '');
       document.getElementById('output').textContent = '選擇並填寫上方欄位後，點擊「產生 Test Case」';
+      toggleFlutterFields();
     }
   </script>
 </body>

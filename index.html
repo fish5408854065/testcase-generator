@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Case 產生器</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { color: #333; margin-bottom: 4px; font-size: 24px; }
+    .subtitle { color: #888; margin-bottom: 24px; font-size: 14px; }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card h3 { color: #333; margin-bottom: 16px; font-size: 16px; }
+    .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+    .form-group { flex: 1; min-width: 150px; }
+    .form-group label { display: block; color: #666; font-size: 13px; margin-bottom: 6px; }
+    .form-group select, .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+    .form-group select:focus, .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #4ecdc4;
+    }
+    textarea { resize: vertical; min-height: 200px; }
+    .btn-row { display: flex; gap: 12px; margin-top: 16px; }
+    .btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: #4ecdc4; color: white; }
+    .btn-primary:hover { background: #3dbdb5; }
+    .btn-secondary { background: #e8e8e8; color: #333; }
+    .btn-secondary:hover { background: #ddd; }
+    .output-box {
+      background: #1a1a2e;
+      color: #a8e6cf;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'SF Mono', 'Monaco', monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .preview-label { color: #666; font-size: 13px; margin-top: 16px; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Test Case 產生器</h1>
+    <p class="subtitle">自動產出 Bug 標題與內容格式</p>
+
+    <div class="card">
+      <h3>📋 基本資訊</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>環境</label>
+          <select id="env">
+            <option value="SIT">SIT</option>
+            <option value="UAT">UAT</option>
+            <option value="PROD">PROD</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>前後端</label>
+          <select id="feBe">
+            <option value="FE">FE</option>
+            <option value="BE">BE</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>測試平台</label>
+          <select id="platform">
+            <option value="M1">M1</option>
+            <option value="M2">M2</option>
+            <option value="M5">M5</option>
+            <option value="M7">M7</option>
+            <option value="M8">M8</option>
+            <option value="M9">M9</option>
+            <option value="Flutter">Flutter</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>測試帳號</label>
+          <input type="text" id="account" placeholder="填入測試帳號">
+        </div>
+        <div class="form-group">
+          <label>FE 版本</label>
+          <input type="text" id="feVersion" placeholder="如: 2.1.0">
+        </div>
+        <div class="form-group">
+          <label>BE 版本</label>
+          <input type="text" id="beVersion" placeholder="如: 1.5.2">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex: 2;">
+          <label>Bug 標題（可留空自動產生）</label>
+          <input type="text" id="bugTitle" placeholder="留空則自動產生格式標題">
+        </div>
+        <div class="form-group">
+          <label>影響平台</label>
+          <select id="impactPlatform">
+            <option value="M1">M1</option>
+            <option value="M2">M2</option>
+            <option value="M5">M5</option>
+            <option value="M7">M7</option>
+            <option value="M8">M8</option>
+            <option value="M9">M9</option>
+            <option value="Flutter">Flutter</option>
+            <option value="All">All</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📝 測試內容</h3>
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <label>測試步驟</label>
+          <textarea id="testSteps" placeholder="1. 進入頁面
+2. 點擊按鈕
+3. 觀察結果"></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <label>測試結果（Bug 描述）</label>
+          <textarea id="testResult" placeholder="描述實際發生的錯誤行為"></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+          <label>預期結果</label>
+          <textarea id="expectedResult" placeholder="描述預期應該發生的正確行為"></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="generate()">🔄 產生 Test Case</button>
+        <button class="btn btn-secondary" onclick="copyOutput()">📋 複製內容</button>
+        <button class="btn btn-secondary" onclick="clearAll()">🗑 清空</button>
+      </div>
+    </div>
+
+    <div class="preview-label">📄 預覽</div>
+    <div class="output-box" id="output">選擇並填寫上方欄位後，點擊「產生 Test Case」</div>
+  </div>
+
+  <script>
+    function getToday() {
+      const now = new Date();
+      const pad = n => n.toString().padStart(2, '0');
+      return `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    }
+
+    function generate() {
+      const env = document.getElementById('env').value;
+      const feBe = document.getElementById('feBe').value;
+      const platform = document.getElementById('platform').value;
+      const account = document.getElementById('account').value || 'N/A';
+      const feVersion = document.getElementById('feVersion').value || 'N/A';
+      const beVersion = document.getElementById('beVersion').value || 'N/A';
+      const bugTitle = document.getElementById('bugTitle').value;
+      const impactPlatform = document.getElementById('impactPlatform').value;
+      const testSteps = document.getElementById('testSteps').value || '（未填寫）';
+      const testResult = document.getElementById('testResult').value || '（未填寫）';
+      const expectedResult = document.getElementById('expectedResult').value || '（未填寫）';
+      const today = getToday();
+
+      let title = bugTitle.trim();
+      if (!title) {
+        title = `[${env}][${feBe}][${platform}] Bug - ${impactPlatform === 'All' ? 'All Platforms' : impactPlatform} 預期行為異常`;
+      }
+
+      const output = `【標題】
+${title}
+
+【測試資訊】
+  測試環境：${env}
+  測試帳號：${account}
+  測試日期 / 測試時間：${today}
+  測試版本：F: ${feVersion}  B: ${beVersion}
+
+【測試步驟】
+${testSteps}
+
+【測試結果】
+${testResult}
+
+【預期結果】
+${expectedResult}`;
+
+      document.getElementById('output').textContent = output;
+    }
+
+    function copyOutput() {
+      const text = document.getElementById('output').textContent;
+      if (!text || text === '選擇並填寫上方欄位後，點擊「產生 Test Case」') {
+        alert('請先產生 Test Case');
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        alert('已複製到剪貼簿！');
+      }).catch(() => {
+        prompt('複製失敗，請手動選取複製：', text);
+      });
+    }
+
+    function clearAll() {
+      document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+      document.getElementById('output').textContent = '選擇並填寫上方欄位後，點擊「產生 Test Case」';
+    }
+
+    // Generate on load with defaults
+    generate();
+  </script>
+</body>
+</html>

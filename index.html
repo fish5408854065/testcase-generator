@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Test Case 產生器</title>
+  <title>Test Case 生成器</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -72,14 +72,14 @@
 </head>
 <body>
   <div class="container">
-    <h1>🧪 Test Case 產生器</h1>
-    <p class="subtitle">自動產出 Bug 標題與內容格式</p>
+    <h1>🧪 Test Case 生成器</h1>
+    <p class="subtitle">自动产出 Bug 标题与内容格式</p>
 
     <div class="card">
-      <h3>📋 基本資訊</h3>
+      <h3>📋 基本信息</h3>
       <div class="form-row">
         <div class="form-group">
-          <label>環境</label>
+          <label>环境</label>
           <select id="env">
             <option value="UAT" selected>UAT</option>
             <option value="SIT">SIT</option>
@@ -87,14 +87,14 @@
           </select>
         </div>
         <div class="form-group">
-          <label>前後端</label>
+          <label>前后端</label>
           <select id="feBe">
             <option value="FE">FE</option>
             <option value="BE">BE</option>
           </select>
         </div>
         <div class="form-group">
-          <label>測試平台</label>
+          <label>测试平台</label>
           <select id="platform">
             <option value="M1">M1</option>
             <option value="M2">M2</option>
@@ -108,8 +108,8 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>測試帳號</label>
-          <input type="text" id="account" placeholder="填入測試帳號">
+          <label>测试帐号</label>
+          <input type="text" id="account" placeholder="填入测试帐号">
         </div>
         <div class="form-group">
           <label>FE 版本</label>
@@ -121,14 +121,14 @@
         </div>
       </div>
       <div class="form-group">
-        <label>Bug 標題（可留空自動產生）</label>
-        <input type="text" id="bugTitle" placeholder="留空則自動產生格式標題">
+        <label>Bug 标题（可留空自动产生）</label>
+        <input type="text" id="bugTitle" placeholder="留空则自动产生格式标题">
       </div>
 
       <div class="flutter-fields" id="flutterFields">
         <div class="form-row">
           <div class="form-group">
-            <label>📱 手機型號</label>
+            <label>📱 手机型号</label>
             <input type="text" id="phoneModel" placeholder="如: iPhone 15 Pro">
           </div>
           <div class="form-group">
@@ -144,28 +144,28 @@
     </div>
 
     <div class="card">
-      <h3>📝 測試內容</h3>
+      <h3>📝 测试内容</h3>
       <div class="form-group">
-        <label>測試步驟</label>
-        <textarea id="testSteps" placeholder="1. 進入頁面&#10;2. 點擊按鈕&#10;3. 觀察結果"></textarea>
+        <label>测试步骤</label>
+        <textarea id="testSteps" placeholder="1. 进入页面&#10;2. 点击按钮&#10;3. 观察结果"></textarea>
       </div>
       <div class="form-group">
-        <label>測試結果（Bug 描述）</label>
-        <textarea id="testResult" placeholder="描述實際發生的錯誤行為"></textarea>
+        <label>测试结果（Bug 描述）</label>
+        <textarea id="testResult" placeholder="描述实际发生的错误行为"></textarea>
       </div>
       <div class="form-group">
-        <label>預期結果</label>
-        <textarea id="expectedResult" placeholder="描述預期應該發生的正確行為"></textarea>
+        <label>预期结果</label>
+        <textarea id="expectedResult" placeholder="描述预期应该发生的正确行为"></textarea>
       </div>
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="generate()">🔄 產生 Test Case</button>
-        <button class="btn btn-secondary" onclick="copyOutput()">📋 複製內容</button>
+        <button class="btn btn-primary" onclick="generate()">🔄 产生 Test Case</button>
+        <button class="btn btn-secondary" onclick="copyOutput()">📋 复制内容</button>
         <button class="btn btn-secondary" onclick="clearAll()">🗑 清空</button>
       </div>
     </div>
 
-    <div class="preview-label">📄 預覽</div>
-    <div class="output-box" id="output">選擇並填寫上方欄位後，點擊「產生 Test Case」</div>
+    <div class="preview-label">📄 预览</div>
+    <div class="output-box" id="output">选择并填写上方字段后，点击「产生 Test Case」</div>
   </div>
 
   <script>
@@ -217,7 +217,6 @@
       } catch (e) {}
     }
 
-    document.getElementById('platform').addEventListener('change', toggleFlutterFields);
     loadFormData();
     toggleFlutterFields(); // init on load
 
@@ -245,9 +244,9 @@
       const feVersion = document.getElementById('feVersion').value || 'N/A';
       const beVersion = document.getElementById('beVersion').value || 'N/A';
       const bugTitle = document.getElementById('bugTitle').value;
-      const testSteps = document.getElementById('testSteps').value || '（未填寫）';
-      const testResult = document.getElementById('testResult').value || '（未填寫）';
-      const expectedResult = document.getElementById('expectedResult').value || '（未填寫）';
+      const testSteps = document.getElementById('testSteps').value || '（未填写）';
+      const testResult = document.getElementById('testResult').value || '（未填写）';
+      const expectedResult = document.getElementById('expectedResult').value || '（未填写）';
       const today = getToday();
 
       const isFlutter = platform === 'Flutter';
@@ -257,35 +256,34 @@
 
       let title = bugTitle.trim();
       if (!title || title.length < 3) {
-        // Auto-generate from basic info when title is empty or too short
-        title = `[${env}][${feBe}][${platform}] Bug - 預期行為異常`;
+        title = `[${env}][${feBe}][${platform}] Bug - 预期行为异常`;
       }
 
-      let testInfo = `  測試環境：${env}
-  測試帳號：${account}
-  測試日期 / 測試時間：${today}
-  測試版本：F: ${feVersion}  B: ${beVersion}`;
+      let testInfo = `  测试环境：${env}
+  测试帐号：${account}
+  测试日期 / 测试时间：${today}
+  测试版本：F: ${feVersion}  B: ${beVersion}`;
 
       if (isFlutter) {
         testInfo += `
-  手機型號：${phoneModel}
+  手机型号：${phoneModel}
   iOS 版本：${iosVersion}
   Android 版本：${androidVersion}`;
       }
 
-      const output = `【標題】
+      const output = `【标题】
 ${title}
 
-【測試資訊】
+【测试资讯】
 ${testInfo}
 
-【測試步驟】
+【测试步骤】
 ${testSteps}
 
-【測試結果】
+【测试结果】
 ${testResult}
 
-【預期結果】
+【预期结果】
 ${expectedResult}`;
 
       document.getElementById('output').textContent = output;
@@ -294,20 +292,21 @@ ${expectedResult}`;
 
     function copyOutput() {
       const text = document.getElementById('output').textContent;
-      if (!text || text === '選擇並填寫上方欄位後，點擊「產生 Test Case」') {
-        alert('請先產生 Test Case');
+      if (!text || text === '选择并填写上方字段后，点击「产生 Test Case」') {
+        alert('请先生成 Test Case');
         return;
       }
       navigator.clipboard.writeText(text).then(() => {
-        alert('已複製到剪貼簿！');
+        alert('已复制到剪贴板！');
       }).catch(() => {
-        prompt('複製失敗，請手動選取複製：', text);
+        prompt('复制失败，请手动选取复制：', text);
       });
     }
 
     function clearAll() {
       document.querySelectorAll('input, textarea').forEach(el => el.value = '');
-      document.getElementById('output').textContent = '選擇並填寫上方欄位後，點擊「產生 Test Case」';
+      document.getElementById('output').textContent = '选择并填写上方字段后，点击「产生 Test Case」';
+      localStorage.removeItem(STORAGE_KEY);
       toggleFlutterFields();
     }
   </script>
